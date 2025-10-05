@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # thêm:
+    'rest_framework',   # để tạo API CRUD
+    'import_export',    # để import/export Excel trong admin
+    'students',         # app bạn sẽ tạo để quản lý sinh viên
 ]
 
 MIDDLEWARE = [
