@@ -1,11 +1,9 @@
 from django.contrib import admin
 
 from .models import (
-    Student,
     Semester,
     StudentPayment,
     Faculty,
-    Major,
     Course,
     MajorCourse,
     Lecturer,
@@ -15,11 +13,9 @@ from .models import (
 )
 
 # Register your models here
-admin.site.register(Student)
 admin.site.register(Semester)
 admin.site.register(StudentPayment)
 admin.site.register(Faculty)
-admin.site.register(Major)
 admin.site.register(Course)
 admin.site.register(MajorCourse)
 admin.site.register(Lecturer)

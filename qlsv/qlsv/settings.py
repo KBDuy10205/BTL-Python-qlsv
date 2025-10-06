@@ -40,7 +40,7 @@ INSTALLED_APPS = [
  
     'import_export',    
     'students',         
-
+    'majors',
     'account',
     'rest_framework',
     'payments',

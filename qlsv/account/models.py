@@ -3,7 +3,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from payments.models import Student
 class AccountManager(BaseUserManager):
     def create_user(self, email, password=None, role="Student", **extra_fields):
         if not email:
