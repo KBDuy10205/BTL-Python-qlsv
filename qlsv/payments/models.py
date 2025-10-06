@@ -1,20 +1,7 @@
 from django.db import models
 from django.conf import settings
-class Student(models.Model):
-    student_id = models.AutoField(primary_key=True, db_column="StudentID")
-    full_name = models.CharField(max_length=100, db_column="FullName")
-    # account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='student_profile', db_column="AccountID")
-    account = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='student')
-    gender = models.CharField(max_length=10, db_column="Gender")
-    birth_date = models.DateField(db_column="BirthDate")
-    address = models.CharField(max_length=255, db_column="Address")
-    phone_number = models.CharField(max_length=15, db_column="Phone")
-    addmission_year = models.IntegerField(db_column="AdmissionYear")
-    email = models.EmailField(db_column="Email")
-
-    class Meta:
-        db_table = "Students"
-
+from students.models import Student
+from majors.models import Major
 
 class Semester(models.Model):
     semester_id = models.AutoField(primary_key=True, db_column="SemesterID")
@@ -26,7 +13,6 @@ class Semester(models.Model):
 
     class Meta:
         db_table = "Semesters"
-
 
 class StudentPayment(models.Model):
     payment_id = models.AutoField(primary_key=True, db_column="PaymentID")
@@ -51,16 +37,6 @@ class Faculty(models.Model):
 
     class Meta:
         db_table = "Faculties"
-
-
-class Major(models.Model):
-    major_id = models.AutoField(primary_key=True, db_column="MajorID")
-    major_name = models.CharField(max_length=100, db_column="MajorName")
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, db_column="FacultyID")
-
-    class Meta:
-        db_table = "Majors"
-
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True, db_column="CourseID")
