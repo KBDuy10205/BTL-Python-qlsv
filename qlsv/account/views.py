@@ -49,8 +49,8 @@ class UserLoginView(APIView):
                 refresh_token = str(refresh)
 
                 # Hạn của access/refresh token
-                access_expiry = datetime.now(timezone.utc) + timedelta(minutes=5)   # ví dụ 5 phút
-                refresh_expiry = datetime.now(timezone.utc) + timedelta(days=1)     # ví dụ 1 ngày
+                access_expiry = timezone.now() + timedelta(minutes=5)
+                refresh_expiry = timezone.now() + timedelta(days=1)
 
                 # Lưu DB
                 Tokens.objects.create(
