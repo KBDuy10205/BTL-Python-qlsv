@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản trị viên - Quản lý sinh viên</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <header>
+    <h1>Trang Quản Trị Viên</h1>
+  </header>
+
+  <div>
+    <input type="text" id="searchInput" placeholder="Nhập mã sinh viên..." />
+    <button id="btnSearch">Tìm</button>
+    <button id="btnAdd">+ Thêm sinh viên</button>
+  </div>
+
+  <!--Lọc sinh viên theo lớp-->
+  <div class="toolbar">
+    <div>
+      <label for="filterClass">Lọc theo lớp:</label>
+      <select id="filterClass">
+        <option value="">-- Tất cả --</option>
+      </select>
+    </div>
+  </div>
+  
+  <main>
+    <table id="studentTable">
+      <thead>
+        <tr>
+          <th>Mã SV</th>
+          <th>Họ tên</th>
+          <th>Giới tính</th>
+          <th>Lớp</th>
+          <th>Khoa</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- dữ liệu từ backend -->
+      </tbody>
+    </table>
+  </main>
+
+  <script src="home.js"></script>
+</body>
+</html>

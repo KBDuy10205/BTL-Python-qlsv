@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thêm sinh viên - Quản trị viên</title>
+  <link rel="stylesheet" href="add.css">
+  <style>
+    
+  </style>
+</head>
+
+<body>
+  <main>
+    <h2>Thêm sinh viên mới</h2>
+
+    <form id="formAdd">
+      <label for="id">Mã sinh viên:</label>
+      <input type="text" name="StudentID" id="id" required placeholder="VD: B23DCCN001">
+
+      <label for="name">Họ và tên:</label>
+      <input type="text" name="FullName" id="name" required placeholder="VD: Nguyễn Văn A">
+
+      <label for="name">Ngày sinh:</label>
+      <input type="date" name="BirthDate" id="name">
+
+      <label for="gender">Giới tính:</label>
+      <select name="Gender" id="gender" required>
+        <option value="">-- Chọn giới tính --</option>
+        <option value="Nam">Nam</option>
+        <option value="Nữ">Nữ</option>
+      </select>
+
+      <label for="class_name">Lớp:</label>
+      <input type="text" name="class_name" id="class_name" required placeholder="VD: D23CQCN01-B">
+
+      <label for="class_name">Quê quán:</label>
+      <input type="text" name="Address" id="class_name" required placeholder="VD: Thanh Hóa">
+
+      <label for="email">Email:</label>
+      <input type="Email" name="email" id="email" placeholder="VD: hdggd@gmail.com">
+
+      <button type="submit">Thêm sinh viên</button>
+    </form>
+
+    <a href="../home/home.html" class="back-btn">← Quay lại danh sách</a>
+  </main>
+
+  <script src="add.js"></script>
+</body>
+</html>

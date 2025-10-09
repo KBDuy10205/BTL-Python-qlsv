@@ -1,0 +1,90 @@
+    body { 
+        margin: 0; 
+        font-family: Arial, sans-serif; 
+        background: #f5f5f5; 
+    }
+    /* Navbar */
+    .navbar {
+      background: #c62828;
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar a {
+      color: #fff; margin: 0 10px; text-decoration: none; font-weight: bold;
+    }
+
+    /* Layout */
+    .container {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 15px;
+      padding: 15px;
+    }
+
+    /*Nội dung chính*/
+    .left{ 
+      display: flex; 
+      flex-direction: column; 
+      gap: 15px; 
+      
+    }
+    /*Khối chức năng*/
+    .right{
+      display: flex; 
+      flex-direction: column; 
+      gap: 15px;
+      position: fixed;
+      top: 80px;
+      right: 40px;
+      width: 250px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 15px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 6px;
+      padding: 15px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .card h3 { margin-top: 0; color: #c62828; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 150px;
+      gap: 10px;
+    }
+    .info-grid img { width: 150px; border-radius: 4px; }
+    .stat-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .box {
+      padding: 15px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .blue { background: #e3f2fd; color: #1565c0; }
+    .orange { background: #fff3e0; color: #ef6c00; }
+    .right .card button {
+      width: 100%;
+      background: #e53935;
+      border: none;
+      padding: 10px;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .feature-list ul { list-style: none; padding: 0; margin: 0; }
+    .feature-list li { padding: 8px 0; border-bottom: 1px solid #eee; cursor: pointer; }
+    .feature-list li:hover { color: #e53935; }
+
+    .label{
+      font-weight: bold;
+    }
