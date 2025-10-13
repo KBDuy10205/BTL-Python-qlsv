@@ -41,7 +41,7 @@ class Account(AbstractBaseUser,PermissionsMixin):
         return self.email
 
     @property
-    def id(self):   # 👈 thêm cái này
+    def id(self):   # thêm cái này
         return self.account_id
     
 class Tokens(models.Model):
