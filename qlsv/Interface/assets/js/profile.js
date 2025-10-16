@@ -16,33 +16,19 @@
         });
     }
 
-    function Homepage(){
-      window.location.href = "profile.html";
-    }
-
-    function tb(){
-      window.location.href = "tb.html";
-    }
-
-    function grade(){
-      window.location.href = "grades.html";
-    }
-
-    function schedule(){
-      window.location.href = "schedule.html";
-    }
 
     async function loadProfile() {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       //Chưa đăng nhập
       if(!token){
-        //alert("Chưa đăng nhập đâu, đăng nhập đi!");
-        //window.location.href = "../index.html";
+        alert("Chưa đăng nhập đâu, đăng nhập đi!");
+        window.location.href = "../index.html";
         return;
       }
 
       try{
-        const res = await fetch("http://localhost:8000/api/students/{id}/",{
+        const student_id = localStorage.getItem("student_id");
+        const res = await fetch(`http://localhost:8000/api/students/${student_id}`,{
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -51,26 +37,30 @@
         const data = await res.json();
 
         //Hiển thị dữ liệu
-        document.getElementById("studentID").innerText = data.StudentID;
-        document.getElementById("name").innerText = data.FullName;
-        document.getElementById("birthday").innerText = data.BirthDate;
-        document.getElementById("gender").innerText = data.Gender;
-        document.getElementById("email").innerText = data.Email;
-        document.getElementById("province").innerText = data.Address;
+        document.getElementById("studentID").innerText = data.student_id;
+        document.getElementById("name").innerText = data.full_name;
+        document.getElementById("birthday").innerText = data.birth_date;
+        document.getElementById("gender").innerText = data.gender;
+        document.getElementById("email").innerText = data.email;
+        document.getElementById("province").innerText = data.address;
 
         //...        
       }
       catch(err){
         console.error(err);
-        alert("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại!");
-        window.location.href = "../index.html";
+        alert("Lỗi kết nối hoặc không lấy được dữ liệu!");
+        //window.location.href = "../index.html";
       }
     }
 
     function logout(){
-      localStorage.removeItem("token");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user_role");
+      localStorage.removeItem("student_id");
       window.location.href = "../index.html";
     }
 
+    
     //Khi vào trang thì load profile luôn
     window.onload = loadProfile;

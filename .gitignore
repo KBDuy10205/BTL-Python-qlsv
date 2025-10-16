@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+# Bỏ qua backend
+/*
+!/.gitignore
+!/qlsv/
+!/qlsv/Interface/
+
 # Distribution / packaging
 .Python
 build/

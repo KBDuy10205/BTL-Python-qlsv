@@ -3,7 +3,6 @@ async function login() {
   const password = document.getElementById("password").value.trim();
   const errorMsg = document.getElementById("errorMsg");
 
-  // Ẩn thông báo lỗi ban đầu
   errorMsg.style.display = "none";
 
   if (!email || !password) {
@@ -13,30 +12,41 @@ async function login() {
   }
 
   try {
+    console.log("📤 Gửi request...");
     const response = await fetch("http://localhost:8000/account/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      }),
+      body: JSON.stringify({ email, password }),
     });
+    console.log("📩 Nhận phản hồi:", response);
 
-    const data = await response.json();
-    console.log(data);
-
-    if (!response.ok) {
-      errorMsg.textContent = data.error || "Sai tài khoản hoặc mật khẩu!";
+    let data;
+    try {
+      data = await response.json();
+      console.log("✅ JSON:", data);
+    } catch (jsonError) {
+      console.error("❌ JSON parse lỗi:", jsonError);
+      errorMsg.textContent = "Phản hồi không phải JSON hợp lệ!";
       errorMsg.style.display = "block";
       return;
     }
 
-    // ✅ Lưu token + role để sử dụng sau
+    if (!response.ok) {
+      console.warn("❌ Server trả mã lỗi:", response.status);
+      errorMsg.textContent = data?.error || "Sai tài khoản hoặc mật khẩu!";
+      errorMsg.style.display = "block";
+      return;
+    }
+
+    // ✅ Lưu token
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
     localStorage.setItem("user_role", data.user.role);
+    localStorage.setItem("student_id",data.user.student_id);
 
-    // ✅ Chuyển hướng theo vai trò
+
+    console.log("🎯 Đăng nhập thành công:", data.user.role);
+
     if (data.user.role === "Student") {
       window.location.href = "students/profile.html";
     } else if (data.user.role === "Admin") {
@@ -46,12 +56,8 @@ async function login() {
     }
 
   } catch (error) {
-    console.error("Lỗi:", error);
+    console.error("💥 Lỗi khi fetch:", error);
     errorMsg.textContent = "Không thể kết nối tới server!";
     errorMsg.style.display = "block";
   }
-  console.log("Sending request:", { email, password });
-console.log("Response status:", response.status);
-console.log("Response body:", data);
-
 }

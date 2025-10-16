@@ -2,13 +2,13 @@
 const accessToken = localStorage.getItem("access_token");
 const userRole = localStorage.getItem("user_role");
 
-/*if (!accessToken) {
+if (!accessToken) {
   alert("Vui lòng đăng nhập trước!");
   window.location.href = "../../index.html";
-} else if (userRole !== "gv") {  // giả sử 'gv' là giáo viên / quản trị
+} else if (userRole !== "Admin") {  
   alert("Bạn không có quyền truy cập trang này!");
   window.location.href = "../../index.html";
-}*/
+}
 
 // ========== 2. Khai báo phần tử ==========
 const tableBody = document.querySelector("#studentTable tbody");
@@ -58,15 +58,66 @@ function renderTable(data) {
       <td>${sv.student_id || "-"}</td>
       <td>${sv.full_name}</td>
       <td>${sv.gender || "-"}</td>
-      <td>${sv.class_name || sv.lop || "-"}</td>
-      <td>${sv.khoa || "-"}</td>
+      <td>${sv.phone || "-"}</td>
+      <td>${sv.address || "-"}</td>
       <td>
-        <button class="btnEdit" data-id="${sv.id}">Sửa</button>
-        <button class="btnDelete" data-id="${sv.id}">Xóa</button>
+        <button class="btnEdit" data-id="${sv.student_id}">Sửa</button>
+        <button class="btnDelete" data-id="${sv.student_id}">Xóa</button>
       </td>
     `;
     tableBody.appendChild(row);
   });
+  // Gán lại sự kiện sau khi render
+  attachActionEvents();
+}
+
+function attachActionEvents() {
+  // Sửa sinh viên
+  document.querySelectorAll(".btnEdit").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      editStudent(id);
+    });
+  });
+
+  // Xóa sinh viên
+  document.querySelectorAll(".btnDelete").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      deleteStudent(id);
+    });
+  });
+}
+
+//Hàm sửa sinh viên
+function editStudent(id) {
+  localStorage.setItem("edit_student_id", id);
+  window.location.href = "../edit/edit.html";
+}
+
+
+//Hàm xóa sinh viên
+async function deleteStudent(id) {
+  if (!confirm("Bạn có chắc chắn muốn xóa sinh viên này?")) return;
+
+  try {
+    const res = await fetch(`http://localhost:8000/api/students/${id}/`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+      },
+    });
+
+    if (res.ok) {
+      alert("Đã xóa sinh viên thành công!");
+      fetchStudents(); // load lại danh sách
+    } else {
+      alert("Không thể xóa sinh viên!");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Lỗi khi xóa sinh viên!");
+  }
 }
 
 // ========== 5. Tạo danh sách lớp để lọc ==========
@@ -106,5 +157,10 @@ btnAdd.addEventListener("click", () => {
   window.location.href = "../add/add.html";
 });
 
+//Chuyển sang trang môn học
+btnManageSubjects.addEventListener("click", () => {
+  window.location.href = "../subjects/subjects.html";
+});
 // ========== 9. Khởi chạy ==========
 fetchStudents();
+học

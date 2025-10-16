@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Sửa thông tin sinh viên</title>
+  <link rel="stylesheet" href="edit.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Sửa thông tin sinh viên</h2>
+
+    <form id="editForm">
+      <label>Mã sinh viên:</label>
+      <input type="text" id="studentId" readonly>
+
+      <label>Họ tên:</label>
+      <input type="text" id="fullName" required>
+
+      <label>Giới tính:</label>
+      <select id="gender">
+        <option value="Nam">Nam</option>
+        <option value="Nữ">Nữ</option>
+      </select>
+
+
+      <div class="buttons">
+        <button type="submit">Lưu thay đổi</button>
+        <button type="button" id="btnCancel">Hủy</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="edit.js"></script>
+</body>
+</html>

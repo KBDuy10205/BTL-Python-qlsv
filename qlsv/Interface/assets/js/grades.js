@@ -26,7 +26,7 @@ function renderScores(data) {
       document.getElementById("username").textContent = localStorage.getItem("username");
 
       // Gọi API backend để lấy dữ liệu điểm
-      fetch("http://localhost:3000/api/diem", {
+      fetch("http://localhost:8000//api/scores/{id}", {
         headers: { "Authorization": "Bearer " + token }
       })
       .then(res => res.json())
