@@ -28,4 +28,3 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         # fields list các trường muốn hiển thị và xử lý
         fields = ('CourseID', 'CourseName', 'Credit', 'faculty_details', 'FacultyID')
-        read_only_fields = ('CourseID',)

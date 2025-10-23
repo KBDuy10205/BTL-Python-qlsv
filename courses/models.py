@@ -17,7 +17,7 @@ class Faculty(models.Model):
 
 # --- Model Chính: Course (Công việc của bạn) ---
 class Course(models.Model):
-    CourseID = models.AutoField(primary_key=True)
+    CourseID = models.CharField(max_length=15, primary_key=True)
     CourseName = models.CharField(max_length=100)
     Credit = models.IntegerField()
 

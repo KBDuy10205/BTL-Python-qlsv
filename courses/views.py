@@ -1,27 +1,88 @@
 # Trong courses/views.py
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import AllowAny
 import openpyxl
-from django.db import transaction
-from .models import Course, Faculty  # Import models
-from .serializers import CourseSerializer  # Import serializer
+# Đảm bảo import IntegrityError để xử lý lỗi khóa chính bị trùng
+from django.db import transaction, IntegrityError
+from .models import Course, Faculty
+from .serializers import CourseSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    # 3. Hiển thị danh sách và thông tin
-    # 5. Thêm, Sửa, Xóa (CRUD)
+    # Cấu hình chung
     queryset = Course.objects.all().select_related('Faculty')
     serializer_class = CourseSerializer
     permission_classes = [AllowAny]
-
-    # 4. Tìm kiếm môn học theo Mã môn, Tên môn
     filter_backends = [filters.SearchFilter]
     search_fields = ['CourseName', '=CourseID']
 
-    # 6. Thêm môn học từ Excel
+    # ===================================================================
+    # 1.  THÊM (CREATE)
+    # ===================================================================
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                self.perform_create(serializer)
+
+                return Response({
+                    'status': 'success',
+                    'message': f'Thêm môn học "{serializer.instance.CourseName}" (Mã: {serializer.instance.CourseID}) thành công!',
+                    'data': serializer.data
+                }, status=status.HTTP_201_CREATED)
+
+            except IntegrityError:
+                # Xử lý lỗi khi CourseID bị trùng lặp
+                return Response({
+                    'status': 'error',
+                    'message': 'Lỗi: Mã môn học này đã tồn tại. Vui lòng chọn mã khác.',
+                    'errors': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({
+            'status': 'error',
+            'message': 'Dữ liệu đầu vào không hợp lệ.',
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    # ===================================================================
+    # 2.  SỬA (UPDATE)
+    # ===================================================================
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        course_id = instance.CourseID
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({
+            'status': 'success',
+            'message': f'Cập nhật môn học "{instance.CourseName}" (Mã: {course_id}) thành công!',
+            'data': serializer.data
+        })
+
+    # ===================================================================
+    # 3. GHI ĐÈ XÓA (DESTROY)
+    # ===================================================================
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        course_name = instance.CourseName
+        course_id = instance.CourseID
+
+        self.perform_destroy(instance)
+
+        return Response({
+            'status': 'success',
+            'message': f'Xóa môn học "{course_name}" (Mã: {course_id}) thành công!'
+        }, status=status.HTTP_204_NO_CONTENT)
+
+    # ===================================================================
+    # 4. Thêm môn học từ Excel
+    # ===================================================================
     @action(detail=False, methods=['post'], url_path='upload-excel')
     def upload_courses_excel(self, request):
         excel_file = request.FILES.get('file')
@@ -35,18 +96,32 @@ class CourseViewSet(viewsets.ModelViewSet):
 
             with transaction.atomic():
                 for row in sheet.iter_rows(min_row=2, values_only=True):
+                    # Giả định thứ tự cột: Tên môn, Tín chỉ, ID Khoa
                     course_name = row[0]
                     credit = row[1]
                     faculty_id = row[2]
+
+                    # Giả định nếu CourseID là nhập tay, nó sẽ là row[3].
+                    # Tùy chỉnh dòng này nếu cấu trúc file Excel của bạn khác.
+                    course_id = row[3] if len(row) > 3 else None
 
                     if not (course_name and credit and faculty_id):
                         continue
 
                     try:
                         faculty = Faculty.objects.get(pk=faculty_id)
-                        new_courses.append(
-                            Course(CourseName=course_name, Credit=int(credit), Faculty=faculty)
-                        )
+
+                        # Tạo dictionary chứa dữ liệu, chỉ thêm CourseID nếu nó tồn tại
+                        course_data = {
+                            'CourseName': course_name,
+                            'Credit': int(credit),
+                            'Faculty': faculty
+                        }
+                        if course_id:
+                            course_data['CourseID'] = course_id
+
+                        new_courses.append(Course(**course_data))
+
                     except Faculty.DoesNotExist:
                         continue
 
