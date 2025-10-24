@@ -6,21 +6,19 @@ from rest_framework.permissions import AllowAny
 import openpyxl
 # Đảm bảo import IntegrityError để xử lý lỗi khóa chính bị trùng
 from django.db import transaction, IntegrityError
-from .models import Course, Faculty
+from .models import Course
 from .serializers import CourseSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     # Cấu hình chung
-    queryset = Course.objects.all().select_related('Faculty')
+    queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [AllowAny]
     filter_backends = [filters.SearchFilter]
     search_fields = ['CourseName', '=CourseID']
 
-    # ===================================================================
     # 1.  THÊM (CREATE)
-    # ===================================================================
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -47,9 +45,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
 
-    # ===================================================================
     # 2.  SỬA (UPDATE)
-    # ===================================================================
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
@@ -65,9 +61,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             'data': serializer.data
         })
 
-    # ===================================================================
-    # 3. GHI ĐÈ XÓA (DESTROY)
-    # ===================================================================
+    # 3.  XÓA (DESTROY)
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         course_name = instance.CourseName
@@ -80,9 +74,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             'message': f'Xóa môn học "{course_name}" (Mã: {course_id}) thành công!'
         }, status=status.HTTP_204_NO_CONTENT)
 
-    # ===================================================================
     # 4. Thêm môn học từ Excel
-    # ===================================================================
     @action(detail=False, methods=['post'], url_path='upload-excel')
     def upload_courses_excel(self, request):
         excel_file = request.FILES.get('file')
@@ -97,33 +89,16 @@ class CourseViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 for row in sheet.iter_rows(min_row=2, values_only=True):
                     # Giả định thứ tự cột: Tên môn, Tín chỉ, ID Khoa
-                    course_name = row[0]
-                    credit = row[1]
-                    faculty_id = row[2]
+                    course_id = row[0]
+                    course_name=row[1]
+                    credit = row[2]
 
-                    # Giả định nếu CourseID là nhập tay, nó sẽ là row[3].
-                    # Tùy chỉnh dòng này nếu cấu trúc file Excel của bạn khác.
-                    course_id = row[3] if len(row) > 3 else None
-
-                    if not (course_name and credit and faculty_id):
+                    if not (course_id and course_name and credit):
                         continue
 
-                    try:
-                        faculty = Faculty.objects.get(pk=faculty_id)
-
-                        # Tạo dictionary chứa dữ liệu, chỉ thêm CourseID nếu nó tồn tại
-                        course_data = {
-                            'CourseName': course_name,
-                            'Credit': int(credit),
-                            'Faculty': faculty
-                        }
-                        if course_id:
-                            course_data['CourseID'] = course_id
-
-                        new_courses.append(Course(**course_data))
-
-                    except Faculty.DoesNotExist:
-                        continue
+                    new_courses.append(
+                        Course(CourseID=course_id, CourseName=course_name, Credit=int(credit))
+                    )
 
                 Course.objects.bulk_create(new_courses)
 
