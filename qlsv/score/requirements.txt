@@ -1,9 +1,0 @@
-fastapi
-uvicorn[standard]
-pandas
-openpyxl
-matplotlib
-numpy
-cryptography
-Pillow
-requests

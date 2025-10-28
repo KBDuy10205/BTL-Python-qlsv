@@ -1,12 +1,12 @@
 import io
 import pandas as pd
 from django.db import transaction
-from .models import Student, Course, Score
+from .models import Score
 
 COLUMNS = {
     "student_code": ["Student Code","MSSV","student_code","code_sv"],
     "student_name": ["Full Name","Họ và tên","Tên học sinh","full_name","name"],
-    "course_code":  ["Course Code","Mã HP","course_code","code_hp"],
+    "course_name":  ["Course Name","Tên HP","course_name","name_hp"],
     "midterm":      ["Midterm","Điểm giữa kỳ","gk","mid"],
     "final":        ["Final","Điểm cuối kỳ","ck","final"],
     "other":        ["Other","Điểm khác","other"]
@@ -24,42 +24,26 @@ def import_scores_from_excel(file_obj):
     df = pd.read_excel(file_obj)
     cols = list(df.columns)
     m = {k: _match_col(cols, v) for k, v in COLUMNS.items()}
-    required = ["student_code","student_name","course_code"]
+    required = ["student_code","student_name","course_name"]
     if any(m[r] is None for r in required):
-        raise ValueError("Thiếu cột bắt buộc: student_code, student_name, course_code")
-
+        raise ValueError("Thiếu cột bắt buộc: student_code, student_name, course_name")
     created, updated = 0, 0
     for _, row in df.iterrows():
         sv_code = str(row[m["student_code"]]).strip()
         sv_name = str(row[m["student_name"]]).strip()
-        hp_code = str(row[m["course_code"]]).strip()
+        hp_name = str(row[m["course_name"]]).strip()
         mid = row[m["midterm"]] if m["midterm"] else None
         fin = row[m["final"]]   if m["final"]   else None
         oth = row[m["other"]]   if m["other"]   else None
-
-        student, _ = Student.objects.get_or_create(code=sv_code, defaults={"full_name": sv_name})
-        if student.full_name != sv_name and sv_name:
-            student.full_name = sv_name; student.save(update_fields=["full_name"])
-        course, _ = Course.objects.get_or_create(code=hp_code, defaults={"name": hp_code})
-
-        obj, is_created = Score.objects.update_or_create(
-            student=student, course=course,
-            defaults={"midterm": mid, "final": fin, "other": oth}
-        )
+        obj, is_created = Score.objects.update_or_create(StudentCode=sv_code, CourseName=hp_name, defaults={"FullName": sv_name, "Midterm": mid, "Final": fin, "Other": oth})
         created += 1 if is_created else 0
         updated += 0 if is_created else 1
     return {"created": created, "updated": updated}
 
 def export_scores_to_excel(queryset):
     data = []
-    for s in queryset.select_related("student","course"):
-        data.append({
-            "Student Code": s.student.code,
-            "Full Name": s.student.full_name,
-            "Course Code": s.course.code,
-            "Course Name": s.course.name,
-            "Midterm": s.midterm, "Final": s.final, "Other": s.other, "Total": s.total
-        })
+    for s in queryset:
+        data.append({"Student Code": s.StudentCode, "Full Name": s.FullName, "Course Name": s.CourseName, "Midterm": s.Midterm, "Final": s.Final, "Other": s.Other, "Total": s.Total})
     df = pd.DataFrame(data)
     buffer = io.BytesIO()
     with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
