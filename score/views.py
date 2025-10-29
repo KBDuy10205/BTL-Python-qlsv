@@ -1,4 +1,4 @@
-from django.db.models import Avg, F, ExpressionWrapper, FloatField, Count, Max, Min
+from django.db.models import Avg, F, ExpressionWrapper, FloatField, Count
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from rest_framework import viewsets, permissions, decorators, response
@@ -48,9 +48,9 @@ class ScoreViewSet(viewsets.ModelViewSet):
     def avg_by_student(self, request):
         scode = request.query_params.get("student_code")
         expr_total = ExpressionWrapper(
-            (F("Midterm") * F("WeightMidterm"))
-            + (F("Final") * F("WeightFinal"))
-            + (F("Other") * F("WeightOther")),
+            (F("Attendance") * 0.1) +
+            (F("Midterm") * 0.2) +
+            (F("Final") * 0.7),
             output_field=FloatField(),
         )
         qs = Score.objects.all()
@@ -78,7 +78,10 @@ class ScoreViewSet(viewsets.ModelViewSet):
         qs = self.get_queryset()
         if course_name:
             qs = qs.filter(CourseName=course_name)
-        totals = [s.Total for s in qs]
+        totals = [
+            round((s.Attendance * 0.1) + (s.Midterm * 0.2) + (s.Final * 0.7), 2)
+            for s in qs
+        ]
         if not totals:
             return response.Response({"labels": [], "counts": [], "count": 0, "avg": 0.0}, status=200)
         bins = [0] * 11
@@ -105,14 +108,12 @@ class ScoreViewSet(viewsets.ModelViewSet):
             CourseName=data["CourseName"],
             defaults={"FullName": data.get("FullName", "")},
         )
+
         mapping = {
             "FullName": "FullName",
+            "Attendance": "Attendance",
             "Midterm": "Midterm",
             "Final": "Final",
-            "Other": "Other",
-            "WeightMidterm": "WeightMidterm",
-            "WeightFinal": "WeightFinal",
-            "WeightOther": "WeightOther",
         }
         for k_api, k_model in mapping.items():
             if k_api in data and data[k_api] is not None:
@@ -122,28 +123,38 @@ class ScoreViewSet(viewsets.ModelViewSet):
 
 
 def score_dashboard(request):
-    expr_total = ExpressionWrapper(
-        (F("Midterm") * F("WeightMidterm"))
-        + (F("Final") * F("WeightFinal"))
-        + (F("Other") * F("WeightOther")),
-        output_field=FloatField(),
-    )
-    total_records = Score.objects.count()
-    total_students = Score.objects.values("StudentCode").distinct().count()
-    stats = Score.objects.aggregate(
-        avg_gpa=Avg(expr_total),
-        max_score=Max(expr_total),
-        min_score=Min(expr_total),
-    )
-    context = {
-        "total_students": total_students,
-        "students_with_scores": total_records,
-        "average_gpa": f"{(stats.get('avg_gpa') or 0):.2f}",
-        "max_score": f"{(stats.get('max_score') or 0):.2f}" if stats.get("max_score") is not None else "N/A",
-        "min_score": f"{(stats.get('min_score') or 0):.2f}" if stats.get("min_score") is not None else "N/A",
-        "scores_list": Score.objects.order_by("-pk")[:50],
-    }
-    return render(request, "score_management/dashboard.html", context)
+    qs = Score.objects.only("StudentCode", "FullName", "CourseName",
+                            "Attendance", "Midterm", "Final").order_by("StudentCode", "CourseName")
+
+    rows = []
+    totals = []
+    for s in qs:
+        total = round(0.10 * float(s.Attendance or 0)
+                      + 0.20 * float(s.Midterm or 0)
+                      + 0.70 * float(s.Final or 0), 2)
+        totals.append(total)
+        rows.append({
+            "StudentCode": s.StudentCode,
+            "FullName": s.FullName,
+            "CourseName": s.CourseName,
+            "Attendance": s.Attendance,
+            "Midterm": s.Midterm,
+            "Final": s.Final,
+            "Total": total,
+        })
+
+    avg = round(sum(totals)/len(totals), 2) if totals else 0.0
+    if   avg >= 9:  rank = "Xuất sắc"
+    elif avg >= 8:  rank = "Giỏi"
+    elif avg >= 6.5:rank = "Khá"
+    elif avg >= 5:  rank = "Trung bình"
+    else:           rank = "Yếu"
+
+    return render(request, "score/dashboard.html", {
+        "scores": rows,
+        "avg": avg,
+        "rank": rank,
+    })
 
 
 class ImportScoreView(View):
