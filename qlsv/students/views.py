@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from account.models import Account
 from .models import Student
 from .serializers import StudentSerializer
-from payments.models import Enrollment
+#from payments.models import Enrollment
 
 
 class StudentViewSet(viewsets.ModelViewSet):
@@ -24,7 +24,7 @@ class StudentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Tự tạo account khi thêm sinh viên mới
         student_email = serializer.validated_data['email']
-        account = Account.objects.create(
+        account = Account.objects.create_user(
             email=student_email,
             password="123456",  # mật khẩu mặc định
             role='Student'

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm môn học</title>
+  <link rel="stylesheet" href="add.css">
+</head>
+<body>
+    <button class="back-btn" onclick="goBack()">⬅ Quay lại</button>
+
+    <h2>Thêm môn học mới</h2>
+    <form id="addCourseForm">
+        <label>Mã môn học</label>
+        <input type="text" id="course_code" required>
+
+        <label>Tên môn học</label>
+        <input type="text" id="course_name" required>
+
+        <label>Số tín chỉ</label>
+        <input type="number" id="credits" required min="1">
+
+      <!--
+        <label>Học kỳ</label>
+        <select id="semester">
+        <option value="1">Học kỳ 1</option>
+        <option value="2">Học kỳ 2</option>
+        <option value="3">Học kỳ 3</option>
+        </select>
+
+        <label>Khoa</label>
+        <input type="text" id="department">
+      -->
+        <button type="submit">Thêm môn học</button>
+    </form>
+
+    <p id="message"></p>
+
+    <script src = "add.js"></script>
+</body>
+</html>

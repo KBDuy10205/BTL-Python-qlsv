@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý môn học</title>
+  <link rel="stylesheet" href="subjects.css">  
+</head>
+<body class="container py-4">
+
+  <h2>QUẢN LÝ MÔN HỌC</h2>
+
+  <div class="my-3">
+    <button id="btnBack" class="btn-back">← Quay lại trang chủ</button>
+  </div>
+
+  <!-- Bảng danh sách -->
+  <table class="table table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Mã môn học</th>
+        <th>Tên môn học</th>
+        <th>Số tín chỉ</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody id="subjectTableBody">
+      <tr><td colspan="5">Đang tải dữ liệu...</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Panel thêm môn học cố định bên phải -->
+  <div class="add-subject-panel">
+    <h3>Thêm môn học</h3>
+    <form id="subjectForm">
+      <div class="mb-2">
+        <label class="form-label">Mã môn học</label>
+        <input type="text" id="subjectCode" class="form-control" required>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Tên môn học</label>
+        <input type="text" id="subjectName" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Số tín chỉ</label>
+        <input type="number" id="subjectCredit" class="form-control" min="1" required>
+      </div>
+      <button type="button" id="btnSaveSubject" class="btn-save">+ Thêm môn học</button>
+    </form>
+  </div>
+
+  <script src="subjects.js"></script>
+</body>
+</html>

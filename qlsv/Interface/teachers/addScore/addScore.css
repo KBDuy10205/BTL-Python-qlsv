@@ -1,0 +1,37 @@
+    body {
+      background-color: #f9f9f9;
+    }
+    h2 {
+      background-color: #b91c1c;
+      color: white;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    table {
+      background: white;
+    }
+    th {
+      background-color: #b91c1c !important;
+      color: white;
+      text-align: center;
+    }
+    td {
+      vertical-align: middle;
+      text-align: center;
+    }
+    .btn-back {
+      background-color: #6b7280;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      margin-top: 16px;
+    }
+    .btn-save {
+      background-color: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      margin-top: 16px;
+    }

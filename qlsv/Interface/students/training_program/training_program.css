@@ -1,0 +1,20 @@
+body {
+    background-color: #f9fafb;
+}
+h2 {
+    background-color: #b91c1c;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+}
+th {
+    background-color: #b91c1c !important;
+    color: white;
+    text-align: center;
+}
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+    
+    

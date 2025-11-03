@@ -1,0 +1,65 @@
+body {
+      background-color: #f9fafb;
+    }
+    h2 {
+      background-color: #b91c1c;
+      color: #fff;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    th {
+      background-color: #b91c1c !important;
+      color: white;
+      text-align: center;
+    }
+    td {
+      text-align: center;
+      vertical-align: middle;
+    }
+    .btn-back {
+      background-color: #6b7280;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+    }
+    .btn-edit {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+    .btn-delete {
+      background-color: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+    /* Form thêm môn học cố định bên phải */
+    .add-subject-panel {
+      position: fixed;
+      top: 90px;
+      right: 40px;
+      width: 320px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 16px;
+    }
+    .add-subject-panel h3 {
+      color: #b91c1c;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .btn-save {
+      background-color: #b91c1c;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      width: 100%;
+    }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nhập điểm sinh viên</title>
+  <link rel="stylesheet" href="addScore.css">
+</head>
+<body class="container py-4">
+
+  <h2>NHẬP ĐIỂM SINH VIÊN</h2>
+
+  <div id="studentInfo" class="mb-3 fw-bold"></div>
+
+  <table class="table table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Mã MH</th>
+        <th>Tên môn học</th>
+        <th>Số tín chỉ</th>
+        <th>Chuyên cần</th>
+        <th>Giữa kỳ (10)</th>
+        <th>Cuối kỳ</th>
+        <th>Trung bình</th>
+        <th>Kết quả</th>
+      </tr>
+    </thead>
+    <tbody id="subjectTableBody">
+      <tr><td colspan="7">Đang tải dữ liệu...</td></tr>
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between">
+    <button id="btnBack" class="btn-back">← Quay lại trang chủ</button>
+    <button id="btnSave" class="btn-save">💾 Lưu điểm</button>
+  </div>
+
+  <script src="addScore.js"></script>
+</body>
+</html>

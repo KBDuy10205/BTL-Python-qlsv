@@ -1,0 +1,35 @@
+body { 
+    font-family: Arial, sans-serif; 
+    margin: 30px; 
+}
+form { 
+    max-width: 400px; 
+    margin: auto; 
+}
+label { 
+    display: block; 
+    margin-top: 10px; 
+}
+input, select { 
+    width: 100%; 
+    padding: 8px; 
+    margin-top: 5px; 
+}
+button { 
+    margin-top: 15px; 
+    padding: 10px 15px; 
+}
+.success { color: green; }
+.error { color: red; }
+.back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 8px 12px;
+      background-color: #ccc;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+.back-btn:hover {
+      background-color: #bbb;
+}

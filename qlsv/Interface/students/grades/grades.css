@@ -1,0 +1,30 @@
+body {
+    background-color: #f7f7f7;
+    font-family: "Segoe UI", sans-serif;
+}
+.score-table {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 90%;
+    margin: 40px auto;
+}
+th {
+    background-color: red;
+    color: white;
+}
+.pass {
+    color: green;
+    font-weight: bold;
+}
+.fail {
+    color: red;
+    font-weight: bold;
+}
+input {
+    width: 70px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

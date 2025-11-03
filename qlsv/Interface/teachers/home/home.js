@@ -2,20 +2,19 @@
 const accessToken = localStorage.getItem("access_token");
 const userRole = localStorage.getItem("user_role");
 
-/*if (!accessToken) {
+if (!accessToken) {
   alert("Vui lòng đăng nhập trước!");
   window.location.href = "../../index.html";
-} else if (userRole !== "gv") {  // giả sử 'gv' là giáo viên / quản trị
+} else if (userRole !== "Admin") {  
   alert("Bạn không có quyền truy cập trang này!");
   window.location.href = "../../index.html";
-}*/
+}
 
 // ========== 2. Khai báo phần tử ==========
 const tableBody = document.querySelector("#studentTable tbody");
 const searchInput = document.getElementById("searchInput");
 const btnSearch = document.getElementById("btnSearch");
 const btnAdd = document.getElementById("btnAdd");
-const filterClass = document.getElementById("filterClass");
 
 let allStudents = []; // dữ liệu sinh viên từ backend
 
@@ -36,7 +35,6 @@ async function fetchStudents() {
     const data = await res.json();
     allStudents = data;
     renderTable(data);
-    renderClassOptions(data);
   } catch (error) {
     console.error(error);
     alert("Lỗi khi tải dữ liệu sinh viên!");
@@ -58,28 +56,86 @@ function renderTable(data) {
       <td>${sv.student_id || "-"}</td>
       <td>${sv.full_name}</td>
       <td>${sv.gender || "-"}</td>
-      <td>${sv.class_name || sv.lop || "-"}</td>
-      <td>${sv.khoa || "-"}</td>
+      <td>${sv.phone || "-"}</td>
+      <td>${sv.address || "-"}</td>
       <td>
-        <button class="btnEdit" data-id="${sv.id}">Sửa</button>
-        <button class="btnDelete" data-id="${sv.id}">Xóa</button>
+        <button class="btnEdit" data-id="${sv.student_id}">Sửa</button>
+        <button class="btnDelete" data-id="${sv.student_id}">Xóa</button>
+        <button class="btnAddScore" data-id="${sv.student_id}">Thêm điểm</button>
       </td>
     `;
     tableBody.appendChild(row);
   });
+  // Gán lại sự kiện sau khi render
+  attachActionEvents();
 }
 
-// ========== 5. Tạo danh sách lớp để lọc ==========
-function renderClassOptions(data) {
-  const classes = [...new Set(data.map((sv) => sv.class_name || sv.lop).filter(Boolean))];
-  filterClass.innerHTML = '<option value="">-- Tất cả --</option>';
-  classes.forEach((lop) => {
-    const opt = document.createElement("option");
-    opt.value = lop;
-    opt.textContent = lop;
-    filterClass.appendChild(opt);
+//Gán sự kiện
+function attachActionEvents() {
+  // Sửa sinh viên
+  document.querySelectorAll(".btnEdit").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      editStudent(id);
+    });
+  });
+
+  // Xóa sinh viên
+  document.querySelectorAll(".btnDelete").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      deleteStudent(id);
+    });
+  });
+
+  //Nhập điểm
+  document.querySelectorAll(".btnAddScore").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id  = btn.getAttribute("data-id");
+      addScore(id);
+    });
   });
 }
+
+//Hàm sửa sinh viên
+function editStudent(id) {
+  localStorage.setItem("edit_student_id", id);
+  window.location.href = "../edit/edit.html";
+}
+
+
+//Hàm xóa sinh viên
+async function deleteStudent(id) {
+  if (!confirm("Bạn có chắc chắn muốn xóa sinh viên này?")) return;
+
+  try {
+    const res = await fetch(`http://localhost:8000/api/students/${id}/`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+      },
+    });
+
+    if (res.ok) {
+      alert("Đã xóa sinh viên thành công!");
+      fetchStudents(); // load lại danh sách
+    } else {
+      alert("Không thể xóa sinh viên!");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Lỗi khi xóa sinh viên!");
+  }
+}
+
+//Hàm nhập điểm
+async function addScore(id) {
+  localStorage.setItem("addScoreID", id);
+
+  window.location.href="../addScore/addScore.html";
+}
+
+
 
 // ========== 6. Xử lý tìm kiếm theo mã sinh viên ==========
 btnSearch.addEventListener("click", () => {
@@ -90,21 +146,30 @@ btnSearch.addEventListener("click", () => {
   renderTable(filtered);
 });
 
-// ========== 7. Lọc theo lớp ==========
-filterClass.addEventListener("change", () => {
-  const selectedClass = filterClass.value;
-  if (!selectedClass) {
-    renderTable(allStudents);
-  } else {
-    const filtered = allStudents.filter((sv) => (sv.class_name || sv.lop) === selectedClass);
-    renderTable(filtered);
-  }
-});
+
 
 // ========== 8. Chuyển sang trang thêm sinh viên ==========
 btnAdd.addEventListener("click", () => {
   window.location.href = "../add/add.html";
 });
+
+//Chuyển sang trang môn học
+btnManageSubjects.addEventListener("click", () => {
+  window.location.href = "../subjects/subjects.html";
+});
+
+//Đăng xuất
+const btnLogout = document.getElementById("btnLogout");
+btnLogout.addEventListener("click", () => {
+  Logout();
+});
+
+function Logout() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("user_role");
+  window.location.href = "../../index.html";
+}
 
 // ========== 9. Khởi chạy ==========
 fetchStudents();

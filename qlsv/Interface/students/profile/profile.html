@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile Sinh viên</title>
+  <link rel="stylesheet" href="profile.css">
+  
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div>
+      <a href="profile.html">Trang chủ</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Left content -->
+    <div class="left" id = "main-content">
+      <!-- Thông tin sinh viên -->
+      <div class="card">
+        <h3>Thông tin sinh viên</h3>
+        <div class="info-grid">
+          <div>
+            <p><span class = "label">Mã SV:</span> <span class = "value" id = "studentID"></span></p>
+            <p><span class = "label">Họ tên:</span> <span class = "value" id = "name"></span></p>
+            <p><span class = "label">Ngày sinh:</span> <span class = "value" id = "birthday"></span></p>
+            <p><span class = "label">Giới tính:</span> <span class = "value" id = "gender"></span></p>
+            <p><span class = "label">Email:</span> <span class = "value" id = "email"></span></p>
+            <p><span class = "label">Nơi sinh:</span> <span class = "value" id = "province"></span></p>
+            <p><span class = "label">Hiện diện:</span> <span class = "value" id = "status"></span></p>
+          </div>
+          <div>
+            <b>Ảnh sinh viên</b>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right content -->
+    <div class="right">
+      <div class="card">
+        <p><span class = "label">Tài khoản:</span> <span class = "value" id = "tk"></span></p>
+        <p><span class = "label">Họ tên:</span> <span class = "value" id = "name1"></span></p>
+
+        <button onclick="logout()">Đăng xuất</button>
+      </div>
+
+      <div class="card feature-list">
+        <h3>Tính năng</h3>
+        <ul>
+          <li><a href="#" onclick="loadPage('../notify/notify.html')">Thông báo</a></li>
+          <li><a href="#" onclick="loadPage('../grades/grades.html')">Xem điểm</a></li>
+          
+          <li><a href="#" onclick="loadPage('../training_program/training_program.html')">Chương trình đào tạo</a></li>
+          <li><a href="../change_password/change_password.html">Đổi mật khẩu</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="profile.js" defer></script>
+
+</body>
+</html>
