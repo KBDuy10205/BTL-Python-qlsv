@@ -42,7 +42,7 @@ async function login() {
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
     localStorage.setItem("user_role", data.user.role);
-    localStorage.setItem("student_id",data.user.student_id);
+    localStorage.setItem("student_id",data.student_id);
 
 
     console.log("🎯 Đăng nhập thành công:", data.user.role);
