@@ -5,14 +5,18 @@ class Score(models.Model):
     StudentCode = models.CharField(max_length=32, verbose_name="Mã sinh viên")
     #FullName    = models.CharField(max_length=128, verbose_name="Họ và tên", blank=True, default="")
     #CourseName  = models.CharField(max_length=128, verbose_name="Tên học phần")
-    CourseId = models.CharField(max_length=32, verbose_name ="Max mon hoc")
+    CourseId = models.CharField(max_length=32, verbose_name ="Mã môn học")
     Attendance = models.FloatField(default=0)  # điểm chuyên cần 10%
     Midterm = models.FloatField(default=0)
     Final = models.FloatField(default=0)
     #Other = models.FloatField(default=0)
-    WeightAttendance = models.FloatField(default=0.1)  # 10%
-    WeightMidterm = models.FloatField(default=0.2)     # 20%
-    WeightFinal = models.FloatField(default=0.7)       # 70%
+    WeightAttendance = models.FloatField(
+        default=0.1,verbose_name="Trọng số chuyên cần"
+    )  
+    WeightMidterm = models.FloatField(
+        default=0.2, verbose_name="Trọng số giữa kỳ")     
+    WeightFinal = models.FloatField(
+        default=0.7, verbose_name="Trọng số cuối kỳ")       
 
     Attendance  = models.DecimalField(  # 10%
         max_digits=4, decimal_places=2, default=0,
