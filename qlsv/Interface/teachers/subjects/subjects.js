@@ -112,7 +112,7 @@ async function saveSubject() {
     form.reset();
     editingId = null;
     btnSave.textContent = "+ Thêm môn học";
-    await fetchSubjects();
+    setTimeout(fetchSubjects,300);
 
   } catch (error) {
     console.error(error);
@@ -159,7 +159,8 @@ async function deleteSubject(id) {
 
     if (!res.ok) throw new Error("Không thể xóa môn học!");
     alert("Đã xóa môn học thành công!");
-    await fetchSubjects();
+   
+    setTimeout(fetchSubjects, 300);
   } catch (error) {
     console.error(error);
     alert("Lỗi khi xóa môn học!");

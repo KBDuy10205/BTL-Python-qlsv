@@ -118,7 +118,7 @@ async function deleteStudent(id) {
 
     if (res.ok) {
       alert("Đã xóa sinh viên thành công!");
-      fetchStudents(); // load lại danh sách
+      setTimeout(fetchStudents, 300); // đợi 0.3s rồi reload danh sách
     } else {
       alert("Không thể xóa sinh viên!");
     }

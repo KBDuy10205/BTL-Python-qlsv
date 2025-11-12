@@ -1,6 +1,7 @@
 # Django imports
 from django.http import HttpResponse
 from django.db import transaction
+from django.contrib.auth.hashers import make_password
 
 # Third-party imports
 import pandas as pd
@@ -8,11 +9,13 @@ from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+
+
 # Local app imports
 from account.models import Account
 from .models import Student
 from .serializers import StudentSerializer
-#from payments.models import Enrollment
+
 
 
 class StudentViewSet(viewsets.ModelViewSet):
@@ -24,17 +27,16 @@ class StudentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Tự tạo account khi thêm sinh viên mới
         student_email = serializer.validated_data['email']
-        account = Account.objects.create_user(
-            email=student_email,
-            password="123456",  # mật khẩu mặc định
-            role='Student'
+        hashed_pw = make_password("123456")
+        account = Account.objects.create(
+            email = student_email,
+            password = hashed_pw,
+            role = 'Student',
         )
         serializer.save(account=account)
 
     def perform_destroy(self, instance):
-        # Xóa tài khoản khi xóa sinh viên
-        if instance.account:
-            instance.account.delete()
+        
         instance.delete()
     @action(detail=False, methods=['get'])
     def export_excel(self, request):

@@ -7,7 +7,7 @@ django.setup()
 from account.models import Account
 
 admin = Account.objects.create_user(
-    email="admin@example.com",
+    email="admin@gmail.com",
     password="123456",
     role="Admin"
 )
