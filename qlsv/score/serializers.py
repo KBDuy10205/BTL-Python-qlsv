@@ -1,57 +1,73 @@
 from rest_framework import serializers
+from django.core.validators import MinValueValidator, MaxValueValidator
 from .models import Score
+from decimal import Decimal
 
 class ScoreSerializer(serializers.ModelSerializer):
     Total = serializers.ReadOnlyField()
-    
+
     class Meta:
         model = Score
-        fields = '__all__'
-        extra_kwargs = {
-            "StudentCode": {"label": "Mã sinh viên"},
-            "CourseId": {"label": "Mã học phần"},
-            "CourseName": {"label": "Tên học phần"},
-            "Midterm": {"label": "Điểm giữa kỳ"},
-            "Final": {"label": "Điểm cuối kỳ"},
-            "Other": {"label": "Điểm khác"},
-            "WeightMidterm": {"label": "Trọng số giữa kỳ"},
-            "WeightFinal": {"label": "Trọng số cuối kỳ"},
-            "WeightOther": {"label": "Trọng số khác"},
-        }
+        fields = [
+            'id', 'StudentCode', 'CourseId', 
+            'WeightAttendance', 'WeightMidterm', 'WeightFinal',
+            'Attendance', 'Midterm', 'Final',
+            'Total', 'created_at', 'updated_at' 
+        ]
+        read_only_fields = ['Total', 'created_at', 'updated_at']
 
 
 class ManualScoreEditSerializer(serializers.Serializer):
     StudentCode = serializers.CharField(label="Mã sinh viên", required=True)
     CourseId = serializers.CharField(label="Mã học phần", required=True)
-    #CourseName = serializers.CharField(label="Tên học phần", required=False)
-    Midterm = serializers.DecimalField(label="Điểm giữa kỳ", max_digits=4, decimal_places=2, required=False)
-    Final = serializers.DecimalField(label="Điểm cuối kỳ", max_digits=4, decimal_places=2, required=False)
-    Attendance = serializers.DecimalField(label="Điểm chuyên cần", max_digits=4, decimal_places=2, required=False)
-    WeightMidterm = serializers.DecimalField(label="Trọng số giữa kỳ", max_digits=4, decimal_places=2, required=False)
-    WeightFinal = serializers.DecimalField(label="Trọng số cuối kỳ", max_digits=4, decimal_places=2, required=False)
-    WeightAttendance = serializers.DecimalField(label="Trọng số chuyên cần", max_digits=4, decimal_places=2, required=False)
 
-    def validate(self, attrs):
-        if not attrs.get("StudentCode"):
-            raise serializers.ValidationError("Thiếu mã sinh viên.")
-        if not attrs.get("CourseId"):
-            raise serializers.ValidationError("Thiếu mã học phần.")
-        return attrs
+    Attendance = serializers.DecimalField(
+        label="Điểm chuyên cần", max_digits=4, decimal_places=2, required=False,
+        validators=[MinValueValidator(0), MaxValueValidator(10)]
+    )
+    Midterm = serializers.DecimalField(
+        label="Điểm giữa kỳ", max_digits=4, decimal_places=2, required=False,
+        validators=[MinValueValidator(0), MaxValueValidator(10)]
+    )
+    Final = serializers.DecimalField(
+        label="Điểm cuối kỳ", max_digits=4, decimal_places=2, required=False,
+        validators=[MinValueValidator(0), MaxValueValidator(10)]
+    )
+    
+    WeightAttendance = serializers.DecimalField(
+        label="Trọng số chuyên cần", max_digits=3, decimal_places=2, required=False,
+        validators=[MinValueValidator(0), MaxValueValidator(1)]
+    )
+    WeightMidterm = serializers.DecimalField(
+        label="Trọng số giữa kỳ", max_digits=3, decimal_places=2, required=False,
+        validators=[MinValueValidator(0), MaxValueValidator(1)]
+    )
+    WeightFinal = serializers.DecimalField(
+        label="Trọng số cuối kỳ", max_digits=3, decimal_places=2, required=False,
+        validators=[MinValueValidator(0), MaxValueValidator(1)]
+    )
 
     def save(self, **kwargs):
         data = self.validated_data
-        score, _ = Score.objects.get_or_create(
+        
+        score, created = Score.objects.get_or_create(
             StudentCode=data["StudentCode"],
             CourseId=data["CourseId"],
-            defaults={
-                "CourseName": data.get("CourseName", ""),
-            },
+            defaults={}
         )
-        for field in [
-            "CourseId", "Midterm", "Final", "Other",
-            "WeightMidterm", "WeightFinal", "WeightOther"
-        ]:
+        
+        update_fields = [
+            "Attendance", "Midterm", "Final",
+            "WeightAttendance", "WeightMidterm", "WeightFinal"
+        ]
+        
+        has_updates = False
+        for field in update_fields:
             if field in data and data[field] is not None:
                 setattr(score, field, data[field])
-        score.save()
+                has_updates = True
+        
+        if created or has_updates:
+            score.save()
+            
         return score
